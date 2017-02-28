@@ -1,0 +1,47 @@
+-----1-----
+
+SELECT * 
+FROM (Employee JOIN Doctor USING(eid)) 
+ORDER BY did,specialty;
+
+-----2-----
+
+SELECT *
+FROM Employee
+WHERE city="Montreal" and Year(startDate) >= 2012 and jobTitle="Nurse";
+
+-----3-----
+
+SELECT medicalReport
+FROM Visit
+WHERE medicareNum= … ;
+
+-----4-----
+
+SELECT Visit.medicareNum, SUM(Doctor.visitFee) AS TotalPaidThisYear
+FROM Doctor
+INNER JOIN Visit ON Doctor.eid = Visit.doctorID
+WHERE Visit.medicareNum = …. AND YEAR(Visit.cdate) >= 2017
+GROUP BY Visit.medicareNum;  
+
+-----5-----
+
+SELECT * FROM (Patient JOIN (SELECT medicareNum FROM Admission WHERE reasonForAdmission='Heart'
+UNION ALL
+SELECT medicareNum FROM Visit WHERE diagnosis = 'Heart') AS T USING (medicareNum))
+WHERE medicareNum IN (SELECT medicareNum FROM Patient JOIN (SELECT medicareNum FROM Admission WHERE reasonForAdmission='Heart'
+UNION ALL
+SELECT medicareNum FROM Visit WHERE diagnosis = 'Heart') AS T USING (medicareNum) GROUP BY medicareNum HAVING COUNT(medicareNum)>=2) GROUP BY medicareNum;
+
+-----6-----
+
+SELECT a.reasonForAdmission,p.firstName, p.lastName, p.phoneNum, a.dateAdmitted, a.dateDischarged
+FROM Patient As p, Admission as a
+WHERE a.medicareNum = p.medicareNum
+ORDER BY a.reasonForAdmission;
+
+-----7-----
+
+SELECT AVG( YEAR(now()) - YEAR(Patient.DOB)) AS ageAverage  
+FROM Patient, Admission
+WHERE Admission.medicareNum = Patient.medicareNum;
